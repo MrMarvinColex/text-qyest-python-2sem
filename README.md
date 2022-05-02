@@ -1,1 +1,5 @@
-# text-qyest-python-2sem
+# Это текстовая игра
+
+Игра происходит в telegramm по ссылке http://t.me/console_text_game_bot
+
+Чтобы запустить проект надо убедиться, что установлена библиотека <i>telebot<\i> для python. Далее через команду "python" запустить файл "game.py".
