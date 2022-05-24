@@ -4,7 +4,7 @@ import telebot
 from telebot import types
 
 
-bot = telebot.TeleBot("5333812218:AAH7vY6iKTXQms8uu7Ony_SYI0j3Hv66H2I")
+bot = telebot.TeleBot("PASTE TOKEN HERE")
 
 class Player:
     def __init__(self, bot, message):

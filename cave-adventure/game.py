@@ -7,7 +7,7 @@ from src.player import Player as Player
 from collections import OrderedDict
 
 
-bot = telebot.TeleBot("PASTE TOKEN HERE")
+bot = playerlib.bot
 
 
 @bot.message_handler(content_types=['text'])
