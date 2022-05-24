@@ -8,6 +8,7 @@ class MapTile:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+    
     def modify_player(self, player, bot, message):
         pass
 
@@ -71,7 +72,6 @@ class EnemyTile(MapTile):
         text = self.alive_text if self.enemy.is_alive() else self.dead_text
         return text
 
-    # here
     def modify_player(self, player, bot, message):
         if self.enemy.is_alive():
             player.hp = player.hp - self.enemy.damage
@@ -92,22 +92,26 @@ class TraderTile(MapTile):
         self.trader = mobs.WanderingTrader()
         super().__init__(x, y)
 
-    # here
     def trade(self, buyer, seller, bot, message):
         global worldCommand
         keyboard = types.InlineKeyboardMarkup();
         key_i = types.InlineKeyboardButton(text='Q', callback_data='Q')
         keyboard.add(key_i)
+        
         for i, item in enumerate(seller.inventory, 1):
             key_i = types.InlineKeyboardButton(text=i, callback_data=i)
             keyboard.add(key_i)
             bot.send_message(message.from_user.id, "{}. {} - {} Gold".format(i, item.name, item.value))
+        
         while True:
             worldCommand = None
             bot.send_message(message.from_user.id, "Choose an item or press Q to exit: ", reply_markup=keyboard)
+            
+            # worldCommand определяется в общей функции, ловящей все сообщения, в "game.py"
             while True:
                 if worldCommand != None:
                     break
+            
             user_input = worldCommand
             if user_input in ['Q', 'q']:
                 return
@@ -118,8 +122,7 @@ class TraderTile(MapTile):
                     self.swap(seller, buyer, to_swap, bot, message)
                 except:
                     bot.send_message(message.from_user.id, "Invalid choice!")
-
-    # here
+    
     def swap(self, seller, buyer, item, bot, message):
         if item.value > buyer.gold:
             bot.send_message(message.from_user.id, "That's too expensive")    
@@ -129,8 +132,7 @@ class TraderTile(MapTile):
         seller.gold = seller.gold + item.value
         buyer.gold = buyer.gold - item.value
         bot.send_message(message.from_user.id, "Trade completed!")
-    
-    # here
+
     def check_if_trade(self, player, bot, message):
         while True:
             global worldCommand
@@ -143,9 +145,11 @@ class TraderTile(MapTile):
             key_q = types.InlineKeyboardButton(text='Q', callback_data='Q')
             keyboard.add(key_q)
             bot.send_message(message.from_user.id, "Would you like to (B)uy, (S)ell, or (Q)uit?", reply_markup=keyboard) 
+            
             while True:
                 if worldCommand != None:
                     break
+            
             user_input = worldCommand
             if user_input in ['q', 'Q']:
                 return
@@ -165,12 +169,13 @@ class FindGoldTile(MapTile):
         self.gold_claimed = False
         super().__init__(x, y)
 
-    # here
+
     def modify_player(self, player, bot, message):
         if not self.gold_claimed:
             self.gold_claimed = True
             player.gold = player.gold + self.gold
             bot.send_message(message.from_user.id, "+{} gold added.".format(self.gold))
+
 
     def intro_text(self):
         if self.gold_claimed:
@@ -187,8 +192,10 @@ class FindGoldTile(MapTile):
 def is_dsl_valid(dsl):
     if dsl.count("|ST|") != 1:
         return False
+    
     if dsl.count("|VT|") == 0:
         return False
+    
     lines = dsl.splitlines()
     lines = [l for l in lines if l]
     pipe_counts = [line.count("|") for line in lines]
@@ -209,9 +216,11 @@ def parse_world_dsl():
         dsl_cells = [c for c in dsl_cells if c]
         for x, dsl_cell in enumerate(dsl_cells):
             tile_type = tile_type_dict[dsl_cell]
+            
             if tile_type == StartTile:
                 global start_tile_location
                 start_tile_location = x, y
+            
             row.append(tile_type(x, y) if tile_type else None)
 
         world_map.append(row)
